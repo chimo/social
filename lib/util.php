@@ -702,13 +702,15 @@ function common_linkify_mention(array $mention)
         $xs = new XMLStringer(false);
 
         $attrs = array('href' => $mention['url'],
-                       'class' => 'h-card u-url p-nickname '.$mention['type']);
+                       'class' => 'u-url p-nickname '.$mention['type']);
 
         if (!empty($mention['title'])) {
             $attrs['title'] = $mention['title'];
         }
 
+        $xs->elementStart('span', array('class' => 'h-card'));
         $xs->element('a', $attrs, $mention['text']);
+        $xs->elementEnd('span');
 
         $output = $xs->getString();
 
