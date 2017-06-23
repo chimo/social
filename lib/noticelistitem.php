@@ -289,7 +289,9 @@ class NoticeListItem extends Widget
                 $this->out->elementStart('li');
                 $text = $addr['text'];
                 unset($addr['text']);
+                $this->out->elementStart('span', array('class' => 'h-card'));
                 $this->out->element('a', $addr, $text);
+                $this->out->elementEnd('span');
                 $this->out->elementEnd('li');
             }
             $this->out->elementEnd('ul', 'addressees');
