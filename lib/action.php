@@ -333,25 +333,22 @@ class Action extends HTMLOutputter // lawsuit
      * @return nothing
      */
     function showShortcutIcon()
-    {
-        if (is_readable(INSTALLDIR . '/theme/' . common_config('site', 'theme') . '/favicon.ico')) {
-            $this->element('link', array('rel' => 'shortcut icon',
-                                         'href' => Theme::path('favicon.ico')));
+    {   
+        if(common_config('site', 'favicon')) {
+            $file = common_config('site', 'favicon'); 
+            $rel = common_config('site', 'mobile') ? 'apple-touch-icon' : 'shortcut icon';
+            $link = common_path($file, GNUsocial::isHTTPS());
+            $this->element('link', ['rel' => $rel, 'href' => $link]);
         } else {
-            // favicon.ico should be HTTPS if the rest of the page is
-            $this->element('link', array('rel' => 'shortcut icon',
-                                         'href' => common_path('favicon.ico', GNUsocial::isHTTPS())));
+            $theme = INSTALLDIR . '/theme/' . common_config('site', 'theme');
+            $file = common_config('site', 'mobile') ? 'apple-touch-icon.png' : 'favicon.ico';
+            $rel = common_config('site', 'mobile') ? 'apple-touch-icon' : 'shortcut icon';
+            $link = is_readable("$theme/$file") ? 
+                    Theme::path($file) : 
+                    common_path($file, GNUsocial::isHTTPS());
+            $this->element('link', ['rel' => $rel, 'href' => $link]);
         }
 
-        if (common_config('site', 'mobile')) {
-            if (is_readable(INSTALLDIR . '/theme/' . common_config('site', 'theme') . '/apple-touch-icon.png')) {
-                $this->element('link', array('rel' => 'apple-touch-icon',
-                                             'href' => Theme::path('apple-touch-icon.png')));
-            } else {
-                $this->element('link', array('rel' => 'apple-touch-icon',
-                                             'href' => common_path('apple-touch-icon.png')));
-            }
-        }
     }
 
     /**

@@ -115,6 +115,7 @@ dupelimit: minimum time allowed for one person to say the same thing
     or UI error.
 textlimit: default max size for texts in the site. Defaults to 0 (no limit).
     Can be fine-tuned for notices, messages, profile bios and group descriptions.
+favicon: the path to a custom favicon, eg: favicon.png
 
 db
 --
