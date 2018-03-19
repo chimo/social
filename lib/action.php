@@ -334,18 +334,18 @@ class Action extends HTMLOutputter // lawsuit
      */
     function showShortcutIcon()
     {   
+        $file = common_config('site', 'favicon') ?
+                common_config('site', 'favicon') : 
+                ( common_config('site', 'mobile') ? 
+                    'apple-touch-icon.png' : 
+                    'favicon.ico'
+                );
+        $link = common_config('site', 'favicon') ? 
+                common_path($file, GNUsocial::isHTTPS()) : 
+                Theme::path($file);
         $rel = common_config('site', 'mobile') ? 'apple-touch-icon' : 'shortcut icon';
-        $file = common_config('site', 'favicon') ?: (common_config('site', 'mobile') ? 'apple-touch-icon.png' : 'favicon.ico');
-        $link = Theme::path($file);
 
-        if(common_config('site', 'favicon')) {
-            $link = common_path($file, GNUsocial::isHTTPS());
-            $this->element('link', ['rel' => $rel, 'href' => $link]);
-        } else {
-            $theme = INSTALLDIR . '/theme/' . common_config('site', 'theme');
-            $this->element('link', ['rel' => $rel, 'href' => $link]);
-        }
-
+        $this->element('link', ['rel' => $rel, 'href' => $link]);
     }
 
     /**
