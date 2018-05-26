@@ -327,15 +327,58 @@ class FavoritePlugin extends ActivityVerbHandlerPlugin
 
     protected function showNoticeListItem(NoticeListItem $nli)
     {
-        // pass
+        $matches = array();
+        $uri = $nli->getNotice()->getUri();
+
+        // Couldn't find the id of the original notice
+        // (i.e.: the notice that was liked. Not the "like" itself)
+        if (!preg_match('/note:([0-9]+):/', $uri, $matches)) {
+            return;
+        }
+
+        $originalNotice = Notice::getKV('id', $matches[1]);
+
+        // Couldn't find notice with the extracted id
+        if ($originalNotice === false) {
+            return;
+        }
+
+        // The nli of the notice that was liked
+        $originalNli = new NoticeListItem($originalNotice, $nli->out);
+
+        // Show original notice
+        $originalNli->showNoticeHeaders();
+        $originalNli->showContent();
+        $originalNli->showNoticeFooter();
+
+        // Get the author who's like this is
+        $likeAuthor = $nli->getNotice()->getProfile();
+        $authorUrl = $likeAuthor->getUrl();
+        $authorName = $likeAuthor->getBestName();
+
+        // Hard-coding the HTML sucks, but we want to make sure the user who's like this is
+        // show explicitly shows up in the list of "$whoever and 5 others liked this"
+        // We don't really care about the other people who liked the original post in this
+        // context, so just don't display them.
+        $nli->out->elementStart('ul', array('class' => 'notices threaded-replies xoxo'));
+        $nli->out->elementStart('li', array('class' => 'notice-data notice-faves'));
+        $nli->out->element('a', array('class' => 'h-card', 'href' => $authorUrl), $authorName);
+        $nli->out->elementEnd('li');
+        $nli->out->elementEnd('ul');
     }
+
     public function openNoticeListItemElement(NoticeListItem $nli)
     {
-        // pass
+        parent::openNoticeListItemElement($nli);
+
+        $nli->out->elementStart('div', array('class' => 'h-cite u-like-of'));
     }
+
     public function closeNoticeListItemElement(NoticeListItem $nli)
     {
-        // pass
+        parent::closeNoticeListItemElement($nli);
+
+        $nli->out->elementEnd('div');
     }
 
     public function onAppendUserActivityStreamObjects(UserActivityStream $uas, array &$objs)
